@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Chat</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar for desktop -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="https://thispersondoesnotexist.com/" alt="Your Profile" class="profile-pic">
+                <div class="sidebar-actions">
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="sidebar-tabs">
+                <button class="tab-btn active" data-tab="chats"><i class="fas fa-comments"></i> Chats</button>
+                <button class="tab-btn" data-tab="status"><i class="fas fa-circle"></i> Status</button>
+                <button class="tab-btn" data-tab="settings"><i class="fas fa-cog"></i> Settings</button>
+            </div>
+            <div class="tab-content" id="chatsTab">
+                <div class="chat-list">
+                    <div class="chat-item active">
+                        <img src="https://thispersondoesnotexist.com/" alt="Contact" class="profile-pic">
+                        <div class="chat-info">
+                            <h4>Juan Perez</h4>
+                            <p>Hello! How are you?</p>
+                        </div>
+                        <div class="chat-meta">
+                            <span class="time">10:30 AM</span>
+                            <span class="unread">2</span>
+                        </div>
+                    </div>
+
+                    <div class="chat-item">
+                        <img src="https://thispersondoesnotexist.com/" alt="Contact" class="profile-pic">
+                        <div class="chat-info">
+                            <h4>Mia Malkova</h4>
+                            <p>📷 Photo</p>
+                        </div>
+                        <div class="chat-meta">
+                            <span class="time">9:45 AM</span>
+                            <span class="unread">1</span>
+                        </div>
+                    </div>
+
+                    <div class="chat-item">
+                        <img src="https://thispersondoesnotexist.com/" alt="Contact" class="profile-pic">
+                        <div class="chat-info">
+                            <h4>Juan Mecanico</h4>
+                            <p>📎 Project_Report.pdf</p>
+                        </div>
+                        <div class="chat-meta">
+                            <span class="time">Yesterday</span>
+                        </div>
+                    </div>
+
+                    <div class="chat-item">
+                        <img src="https://thispersondoesnotexist.com/" alt="Contact" class="profile-pic">
+                        <div class="chat-info">
+                            <h4>los gallos</h4>
+                            <p>Mom: When are you coming home?</p>
+                        </div>
+                        <div class="chat-meta">
+                            <span class="time">Yesterday</span>
+                            <span class="unread">5</span>
+                        </div>
+                    </div>
+
+                    <div class="chat-item">
+                        <img src="https://thispersondoesnotexist.com/" alt="Contact" class="profile-pic">
+                        <div class="chat-info">
+                            <h4>Bob el constructor</h4>
+                            <p>🎵 Voice message (0:30)</p>
+                        </div>
+                        <div class="chat-meta">
+                            <span class="time">2 days ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content hidden" id="statusTab">
+                <div class="status-list">
+                    <div class="status-item">
+                        <div class="status-ring">
+                            <img src="https://thispersondoesnotexist.com/" alt="Status" class="profile-pic">
+                        </div>
+                        <div class="status-info">
+                            <h4>My Status</h4>
+                            <p>Tap to add status update</p>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-ring active">
+                            <img src="https://thispersondoesnotexist.com/" alt="Status" class="profile-pic">
+                        </div>
+                        <div class="status-info">
+                            <h4>John Doe</h4>
+                            <p>Today, 10:30 AM</p>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-ring active">
+                            <img src="https://thispersondoesnotexist.com/" alt="Status" class="profile-pic">
+                        </div>
+                        <div class="status-info">
+                            <h4>Alice Smith</h4>
+                            <p>Today, 9:15 AM</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="storyViewer" class="story-viewer hidden">
+                    <div class="story-header">
+                        <button class="close-story"><i class="fas fa-times"></i></button>
+                        <div class="story-info">
+                            <img src="" alt="Profile" class="profile-pic">
+                            <span class="story-username"></span>
+                            <span class="story-time"></span>
+                        </div>
+                    </div>
+                    <div class="story-content">
+                        <div class="story-progress"></div>
+                        <img src="" alt="Story" class="story-image">
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content hidden" id="settingsTab">
+                <div class="settings-list">
+                    <div class="settings-item">
+                        <h4>Theme</h4>
+                        <label class="switch">
+                            <input type="checkbox" id="themeSwitch">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main chat area -->
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="user-info">
+                    <img src="https://thispersondoesnotexist.com/" alt="Profile" class="profile-pic">
+                    <div class="user-details">
+                        <h3>John Doe</h3>
+                        <span class="status">online</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be added here dynamically -->
+            </div>
+            
+            <div class="chat-input">
+                <button id="emojiButton" class="emoji-button">
+                    <i class="far fa-smile"></i>
+                </button>
+                <input type="text" id="messageInput" placeholder="Type a message...">
+                <button id="sendButton">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile bottom navigation -->
+    <div class="mobile-nav">
+        <button class="nav-btn active" data-tab="chats">
+            <i class="fas fa-comments"></i>
+            <span>Chats</span>
+        </button>
+        <button class="nav-btn" data-tab="status">
+            <i class="fas fa-circle"></i>
+            <span>Status</span>
+        </button>
+        <button class="nav-btn" data-tab="settings">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@3.1.1/dist/index.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
