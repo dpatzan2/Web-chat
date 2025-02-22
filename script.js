@@ -1,8 +1,71 @@
+// Mobile view handling
+function isMobileView() {
+    return window.innerWidth <= 768;
+}
+
+function showChat() {
+    if (isMobileView()) {
+        const sidebar = document.querySelector('.sidebar');
+        const chatContainer = document.querySelector('.chat-container');
+        const mobileNav = document.querySelector('.mobile-nav');
+        
+        sidebar.style.display = 'none';
+        chatContainer.style.display = 'flex';
+        chatContainer.style.transform = 'translateX(0)';
+        mobileNav.style.display = 'none';
+        
+        // Add back button if it doesn't exist
+        if (!document.querySelector('.back-button')) {
+            const backButton = document.createElement('button');
+            backButton.className = 'back-button';
+            backButton.innerHTML = '<i class="fas fa-arrow-left"></i>';
+            backButton.addEventListener('click', hideChat);
+            document.querySelector('.chat-header').insertBefore(backButton, document.querySelector('.user-info'));
+        }
+    }
+}
+
+function hideChat() {
+    if (isMobileView()) {
+        const sidebar = document.querySelector('.sidebar');
+        const chatContainer = document.querySelector('.chat-container');
+        const mobileNav = document.querySelector('.mobile-nav');
+        
+        sidebar.style.display = 'flex';
+        chatContainer.classList.remove('active');
+        chatContainer.style.transform = 'translateX(100%)';
+        mobileNav.style.display = 'flex';
+    }
+}
+
+// Initialize mobile view
+function initMobileView() {
+    if (isMobileView()) {
+        hideChat();
+        
+        // Add click event to all chat items
+        document.querySelectorAll('.chat-item').forEach(item => {
+            item.addEventListener('click', () => {
+                showChat();
+                // Update active chat item
+                document.querySelectorAll('.chat-item').forEach(chat => chat.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+    }
+}
+
+// Add resize listener to handle view changes
+window.addEventListener('resize', initMobileView);
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', initMobileView);
+
 // Message and Status enums
 const MessageType = {
     TEXT: 'text',
     IMAGE: 'image',
     AUDIO: 'audio',
+    VIDEO: 'video',
     FILE: 'file'
 };
 
@@ -28,6 +91,30 @@ function createMessage(content, sent, type = MessageType.TEXT) {
                     <source src="${content}" type="audio/mpeg">
                     Your browser does not support the audio element.
                 </audio>`;
+            break;
+        case MessageType.VIDEO:
+            messageContent = `
+                <div class="video-message">
+                    <video class="video-player">
+                        <source src="${content}" type="video/mp4">
+                        <source src="${content.replace(/\.[^.]+$/, '.webm')}" type="video/webm">
+                        <source src="${content.replace(/\.[^.]+$/, '.mkv')}" type="video/x-matroska">
+                        <source src="${content.replace(/\.[^.]+$/, '.mov')}" type="video/quicktime">
+                        <source src="${content.replace(/\.[^.]+$/, '.avi')}" type="video/x-msvideo">
+                        <source src="${content.replace(/\.[^.]+$/, '.wmv')}" type="video/x-ms-wmv">
+                        <source src="${content.replace(/\.[^.]+$/, '.flv')}" type="video/x-flv">
+                        <source src="${content.replace(/\.[^.]+$/, '.3gp')}" type="video/3gpp">
+                        Your browser does not support this video format.
+                    </video>
+                    <div class="video-controls">
+                        <button class="video-play-pause"><i class="fas fa-play"></i></button>
+                        <div class="video-timeline">
+                            <div class="video-progress"></div>
+                        </div>
+                        <span class="video-time">0:00</span>
+                        <button class="video-fullscreen"><i class="fas fa-expand"></i></button>
+                    </div>
+                </div>`;
             break;
         case MessageType.FILE:
             const fileName = content.split('/').pop();
@@ -487,11 +574,61 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    // Handle video player functionality
+    chatMessages.addEventListener('click', (e) => {
+        const videoMessage = e.target.closest('.video-message');
+        if (videoMessage) {
+            const video = videoMessage.querySelector('.video-player');
+            const playPauseBtn = videoMessage.querySelector('.video-play-pause');
+            const timeline = videoMessage.querySelector('.video-timeline');
+            const progress = videoMessage.querySelector('.video-progress');
+            const timeDisplay = videoMessage.querySelector('.video-time');
+            const fullscreenBtn = videoMessage.querySelector('.video-fullscreen');
+
+            if (e.target.closest('.video-play-pause')) {
+                if (video.paused) {
+                    video.play();
+                    playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                } else {
+                    video.pause();
+                    playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                }
+            } else if (e.target.closest('.video-timeline')) {
+                const timelineRect = timeline.getBoundingClientRect();
+                const clickPosition = (e.clientX - timelineRect.left) / timelineRect.width;
+                video.currentTime = clickPosition * video.duration;
+            } else if (e.target.closest('.video-fullscreen')) {
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                } else {
+                    video.requestFullscreen();
+                }
+            }
+        }
+    });
+
+    // Update video progress and time
+    chatMessages.addEventListener('timeupdate', (e) => {
+        if (e.target.matches('.video-player')) {
+            const video = e.target;
+            const videoMessage = video.closest('.video-message');
+            const progress = videoMessage.querySelector('.video-progress');
+            const timeDisplay = videoMessage.querySelector('.video-time');
+
+            const progressPercent = (video.currentTime / video.duration) * 100;
+            progress.style.width = progressPercent + '%';
+
+            const minutes = Math.floor(video.currentTime / 60);
+            const seconds = Math.floor(video.currentTime % 60);
+            timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+    }, true);
+
     // Add file input for attachments
     const attachmentInput = document.createElement('input');
     attachmentInput.type = 'file';
     attachmentInput.multiple = true;
-    attachmentInput.accept = 'image/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx';
+    attachmentInput.accept = 'image/*,audio/*,video/*,.pdf,.doc,.docx,.xls,.xlsx';
     attachmentInput.style.display = 'none';
     document.body.appendChild(attachmentInput);
 
@@ -514,8 +651,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const currentChat = document.querySelector('.chat-header h3').textContent;
         
         Array.from(files).forEach(file => {
-            // In a real app, you would upload the file to a server here
-            // For demo purposes, we'll use local URLs
+       
             const fileUrl = URL.createObjectURL(file);
             let messageType;
 
